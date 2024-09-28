@@ -1,6 +1,6 @@
 package com.bytmasoft.dss.controller;
 
-import com.bytmasoft.dss.entity.StudentDetails;
+import com.bytmasoft.dss.dto.StudentDetailDTO;
 import com.bytmasoft.dss.service.BFFServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,9 @@ public class BFFControllerImpl implements BFFControllerApi {
 
     private final BFFServiceImpl bffService;
 
+
     @Override
-    public ResponseEntity<StudentDetails> getStudentDetails(Long studentId, String authorizationHeader) {
-        return ResponseEntity.ok(bffService.getStudentDetails(studentId, authorizationHeader));
+    public ResponseEntity<StudentDetailDTO> getStudentDetails(Long studentId, String authorizationHeader) {
+        return ResponseEntity.ok(bffService.getStudentDetail(studentId, authorizationHeader));
     }
 }

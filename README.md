@@ -7,3 +7,4 @@
 ## Workflow:
 - BFF call different Service Student-Service, Teacher-Service, DM-Service
 - BFF aggregate the data and send response back to Frontend
+- BFF handel all responses which need more call to different services and prepare a response data

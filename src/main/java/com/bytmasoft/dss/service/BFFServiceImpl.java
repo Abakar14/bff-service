@@ -1,13 +1,9 @@
 package com.bytmasoft.dss.service;
 
-import com.bytmasoft.dss.config.ServicesProperties;
-import com.bytmasoft.dss.entity.Student;
-import com.bytmasoft.dss.entity.StudentDetails;
-import com.bytmasoft.dss.entity.Teacher;
+import com.bytmasoft.dss.dto.BffResponseDTO;
+import com.bytmasoft.dss.dto.StudentDetailDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 
@@ -15,33 +11,28 @@ import reactor.core.publisher.Mono;
 @Service
 public class BFFServiceImpl implements BFFService {
 
-    private final WebClient webClient;
-    private final ServicesProperties servicesProperties;
-
+    private final StudentServiceImpl studentService;
+    private final TeacherServiceImpl teacherService;
+   private final DocumentServiceImpl documentService;
 
     @Override
-    public StudentDetails getStudentDetails(Long studentId, String authorizationHeader) {
-        Mono<Student> student = webClient
+    public Mono<BffResponseDTO> getBffData(Long studentId, Long teacherId, Long documentId) {
 
-                .get()
-                .uri(servicesProperties.getStudentService().getBaseUrl()+"/{studentId}", studentId)
-                .header(HttpHeaders.AUTHORIZATION, authorizationHeader )
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .retrieve()
-                .bodyToMono(Student.class)
-                .onErrorResume(e -> Mono.error(new RuntimeException("Failed to fetch student details")));
-
-        Mono<Teacher> teacher = webClient
-                .get()
-                .uri(servicesProperties.getStudentService().getBaseUrl()+"/{studentId}", studentId)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .retrieve()
-                .bodyToMono(Teacher.class);
-
-        StudentDetails studentDetails = new StudentDetails(student.block(), null);
-        return studentDetails;
+        return Mono.zip(
+                studentService.getStudentById(studentId),
+                teacherService.getTeacherById(teacherId),
+                documentService.getDocumentById(documentId)
+        ).map(tuple -> {
+            BffResponseDTO response = new BffResponseDTO();
+            response.setStudent(tuple.getT1());
+            response.setTeacher(tuple.getT2());
+            response.setDocument(tuple.getT3());
+            return response;
+        });
     }
 
+    @Override
+    public StudentDetailDTO getStudentDetail(Long studentId, String authorizationHeader) {
+        return null;
+    }
 }

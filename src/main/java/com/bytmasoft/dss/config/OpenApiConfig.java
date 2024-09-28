@@ -2,10 +2,13 @@ package com.bytmasoft.dss.config;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
                         email = "abakar61@web.de",
                         url = ""
                 ),
-                description = "OpenApi for Student Service",
-                title = "Student Service",
+                description = "OpenApi for BFF Service",
+                title = "BFF Service",
                 version = "1.0",
                 license = @License(
                         name = "Licence name",
@@ -26,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
                 ),
                 termsOfService = "Term of Service"
 
-        )
+        ),
         //,
         //,
         /* servers = {
@@ -40,24 +43,24 @@ import org.springframework.context.annotation.Configuration;
                          url = "http://www.prod:8081"
                  )
          },*/
-//        security = {
-//                @SecurityRequirement(
-//                        name = "BearerAuth"
-//                )
-//        }
+        security = {
+                @SecurityRequirement(
+                        name = "BearerAuth"
+                )
+        }
 )
-//@SecuritySchemes(
-//        value = {
-//                @SecurityScheme(
-//                        name = "BearerAuth",
-//                        description = "Jwt authentication",
-//                        scheme = "Bearer",
-//                        type = SecuritySchemeType.HTTP,
-//                        bearerFormat = "JWT",
-//                        in = SecuritySchemeIn.HEADER
-//                )
-//        }
-//)
+@SecuritySchemes(
+        value = {
+                @SecurityScheme(
+                        name = "BearerAuth",
+                        description = "Jwt authentication",
+                        scheme = "Bearer",
+                        type = SecuritySchemeType.HTTP,
+                        bearerFormat = "JWT",
+                        in = SecuritySchemeIn.HEADER
+                )
+        }
+)
 @Configuration
 public class OpenApiConfig {
 }

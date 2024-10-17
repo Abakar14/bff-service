@@ -4,6 +4,7 @@ import com.bytmasoft.dss.entity.Address;
 import com.bytmasoft.dss.entity.Course;
 import com.bytmasoft.dss.entity.Teacher;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -24,11 +25,11 @@ import java.util.List;
  *    - Current teachers
  * </pre>
  */
-@AllArgsConstructor
-@NoArgsConstructor
-@SuperBuilder
 @Data
-public class StudentDetailUpdateDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class StudentUpdateDTO {
 
     private String firstName;
     private String lastName;

@@ -1,24 +1,8 @@
-
-server:
-    port: 8086
-    servlet:
-        context-path: /dss/api/v1/
-spring:
-    profiles:
-        active: dev
-    application:
-        name: bff-service
-    servlet:
-        multipart:
-            enabled: true
-    main:
-        allow-bean-definition-overriding: true
-
-
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8762/eureka/
+            defaultZone: http://localhost:8762eureka/
+
 
 services:
     student-service:
@@ -32,7 +16,6 @@ services:
         base-url: http://storage-service/documents
 
 # JWT Properties expiration and refresh times (in milliseconds)
-# Secret key
 jwt:
     secret:
         key: 8KvVu4Bn2KwBNX1MdnXY6VaRVLekVxurk3aaJxnzdCuZL6AHEL0EnnAOYLZtHWUr

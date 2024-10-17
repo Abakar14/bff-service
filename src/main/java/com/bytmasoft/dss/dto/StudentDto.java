@@ -1,12 +1,10 @@
 package com.bytmasoft.dss.dto;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <pre>
@@ -23,11 +21,17 @@ import java.io.Serializable;
  * </pre>
  */
 @Data
-@Validated
 @NoArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class StudentDetailCreateDTO extends StudentDetailUpdateDTO implements Serializable {
+@AllArgsConstructor
+@Builder
+public class StudentDto {
+
+    private String fileName;
+    private String addedOn;
+    private String modifiedOn;
+    private String matNumber;
+    private String insertedBy;
+    private Date dateOfBirth;
 
 
 

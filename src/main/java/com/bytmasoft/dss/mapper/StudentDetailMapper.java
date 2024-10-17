@@ -1,6 +1,6 @@
 package com.bytmasoft.dss.mapper;
 
-import com.bytmasoft.dss.dto.StudentDetailDTO;
+import com.bytmasoft.dss.dto.StudentDto;
 import com.bytmasoft.dss.entity.Course;
 import com.bytmasoft.dss.entity.Student;
 import com.bytmasoft.dss.entity.Teacher;
@@ -16,18 +16,18 @@ public interface StudentDetailMapper {
 StudentDetailMapper INSTANCE  = Mappers.getMapper(StudentDetailMapper.class);
 
 
-    @Mapping(source = "firstName", target = "firstName")
-    @Mapping(source = "lastName", target = "lastName")
-    @Mapping(source = "email", target = "email")
-    @Mapping(source = "phone", target = "phone")
-    @Mapping(source = "address", target = "address")
-    @Mapping(source = "courses", target = "courses")
-    StudentDetailDTO studentToStudentDetailDTO(Student student);
+//    @Mapping(source = "firstName", target = "firstName")
+//    @Mapping(source = "lastName", target = "lastName")
+//    @Mapping(source = "email", target = "email")
+//    @Mapping(source = "phone", target = "phone")
+//    @Mapping(source = "address", target = "address")
+//    @Mapping(source = "courses", target = "courses")
+//    StudentDto studentToStudentDetailDTO(Student student);
 
     // Map from List of Teacher entities to StudentDetailDTO teachers field
-    List<Teacher> teachersToDTO(List<Teacher> teachers);
+//    List<Teacher> teachersToDTO(List<Teacher> teachers);
 
-    List<Course> coursesToDTO(List<Course> courses);
+//    List<Course> coursesToDTO(List<Course> courses);
   /*  @Mapping(source = "student.name", target = "studentName")
     @Mapping(source = "teacher.name", target = "teacherName")
     @Mapping(source = "course.title", target = "courseTitle")

@@ -6,7 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @Builder
 public class DocumentDto {
+    private Long id;
+    private String fileName;
+    private String originalFileName;
+    private String filePath;
+    private Integer version;
 }

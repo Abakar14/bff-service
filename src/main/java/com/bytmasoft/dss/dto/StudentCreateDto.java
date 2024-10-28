@@ -1,10 +1,7 @@
 package com.bytmasoft.dss.dto;
 
-import lombok.*;
-import lombok.experimental.SuperBuilder;
-import org.springframework.validation.annotation.Validated;
-
-import java.io.Serializable;
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * <pre>
@@ -21,9 +18,8 @@ import java.io.Serializable;
  * </pre>
  */
 @Data
-@NoArgsConstructor
 
 @Builder
-public class StudentCreateDTO {
+public class StudentCreateDto {
 
 }

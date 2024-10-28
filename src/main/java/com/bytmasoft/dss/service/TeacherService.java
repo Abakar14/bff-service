@@ -21,7 +21,7 @@ public class TeacherService {
 
     public Mono<TeacherDto> getTeacherById(Long teacherId, String jwtToken) {
         logger.info("Starting request to fetch teacher with ID: {}", teacherId);
-        return webClientUtil.get(servicesProperties.getTeacherService().getBaseUrl()+teacherId, TeacherDto.class)
+        return webClientUtil.get(servicesProperties.getTeacherServiceTeacher().getBaseUrl()+teacherId, TeacherDto.class)
                 .doOnSuccess(teacher -> logger.info("Successfully fetched teacher data: {}", teacher))
                 .doOnError(throwable -> logger.error("Failed to fetch teacher for ID: {}", teacherId, throwable));
     }

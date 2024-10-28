@@ -1,17 +1,16 @@
 package com.bytmasoft.dss.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StudentResponse {
-    StudentDto student;
-    TeacherDto teacher;
-    DocumentDto document;
+
+    private StudentDto student;
+    private AddressDto addressDto;
+ //   private GuardianDto guardianDto;
+  //  private DocumentDto documentDto;
 
 }

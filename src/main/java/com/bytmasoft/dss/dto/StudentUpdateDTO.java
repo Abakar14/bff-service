@@ -1,13 +1,8 @@
 package com.bytmasoft.dss.dto;
 
-import com.bytmasoft.dss.entity.Address;
-import com.bytmasoft.dss.entity.Course;
-import com.bytmasoft.dss.entity.Teacher;
-import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -26,8 +21,7 @@ import java.util.List;
  * </pre>
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Builder
 public class StudentUpdateDTO {
 
@@ -39,7 +33,5 @@ public class StudentUpdateDTO {
     private String profilePictureUrl;
     private String gender;
     private String gpa;
-    private Address address;
-    private List<Course> courses;
-    private List<Teacher> teachers;
+
 }

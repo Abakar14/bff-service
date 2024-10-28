@@ -2,12 +2,11 @@ package com.bytmasoft.dss.service;
 
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
+import com.bytmasoft.dss.dto.GuardianDto;
 import com.bytmasoft.dss.dto.StudentDto;
-import com.bytmasoft.dss.mapper.StudentDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springdoc.core.service.GenericResponseService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -15,22 +14,29 @@ import reactor.core.publisher.Mono;
 @Service
 public class StudentService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
     private final WebClientUtil webClientUtil;
     private final ServicesProperties servicesProperties;
-    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
-  //  private final StudentDetailMapper studentDetailMapper;
-   // private final GenericResponseService responseBuilder;
+
+
+    public Mono<StudentDto> saveStudent(StudentDto studentDto, String token) {
+        return webClientUtil.post(servicesProperties.getStudentServiceStudent().getBaseUrl(),studentDto, StudentDto.class, token);
+    }
 
     
-    public Mono<StudentDto> getStudentDetails(Long studentId, String jwtToken) {
+    public Mono<StudentDto> getStudentDto(Long studentId, String jwtToken) {
         logger.info("Starting request to fetch student with ID: {}", studentId);
 
-        return webClientUtil.get(servicesProperties.getStudentService().getBaseUrl()+studentId, StudentDto.class)
+        return webClientUtil.get(servicesProperties.getStudentServiceStudent().getBaseUrl()+studentId, StudentDto.class)
+
                 .doOnSuccess(student -> logger.info("Successfully fetched student data: {}", student))
                 .doOnError(throwable -> logger.error("Failed to fetch student for ID: {}", studentId, throwable));
     }
 
+    public Mono<GuardianDto> saveGuardian(GuardianDto guardianDto, String jwtToken) {
+        return webClientUtil.post(servicesProperties.getStudentServiceGuardian().getBaseUrl(), guardianDto, GuardianDto.class, jwtToken);
 
+    }
 
 
 //    

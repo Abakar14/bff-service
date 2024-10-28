@@ -1,30 +1,29 @@
 eureka:
-    client:
-        service-url:
-            defaultZone: http://localhost:8762eureka/
-
+  client:
+    service-url:
+      defaultZone: http://localhost:8762eureka/
 
 services:
-    student-service:
-        name: student-service
-        base-url: http://localhost:9090/dss/api/v1/students
-    teacher-service:
-        name: teacher-service
-        base-url: http://teacher-service/teachers
-    storage-service:
-        name: storage-service
-        base-url: http://storage-service/documents
+  student-service:
+    name: student-service
+    base-url: http://localhost:9090/dss/api/v1/students
+  teacher-service:
+    name: teacher-service
+    base-url: http://teacher-service/teachers
+  storage-service:
+    name: storage-service
+    base-url: http://storage-service/documents
 
 # JWT Properties expiration and refresh times (in milliseconds)
 jwt:
-    secret:
-        key: 8KvVu4Bn2KwBNX1MdnXY6VaRVLekVxurk3aaJxnzdCuZL6AHEL0EnnAOYLZtHWUr
-    access:
-        token:
-            expiration: 1800000 # 30 min in milliseconds for token expiration time
-    refresh:
-        token:
-            expiration: 604800000    # 7 days in milliseconds
+  secret:
+    key: 8KvVu4Bn2KwBNX1MdnXY6VaRVLekVxurk3aaJxnzdCuZL6AHEL0EnnAOYLZtHWUr
+  access:
+    token:
+      expiration: 1800000 # 30 min in milliseconds for token expiration time
+  refresh:
+    token:
+      expiration: 604800000 # 7 days in milliseconds
 student:
-    picture:
-        path: /home/abakar/programming/git_repos/dss/student_pictures/
+  picture:
+    path: /home/abakar/programming/git_repos/dss/student_pictures/

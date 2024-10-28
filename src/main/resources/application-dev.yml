@@ -1,30 +1,54 @@
 eureka:
-    client:
-        service-url:
-            defaultZone: http://${EUREKA_DEV_HOST}:${EUREKA_DEV_PORT}/eureka/
-
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_DEV_HOST}:${EUREKA_DEV_PORT}/eureka/
 
 services:
-    student-service:
-        name: student-service
-        base-url: http://localhost:9090/dss/api/v1/students
-    teacher-service:
-        name: teacher-service
-        base-url: http://teacher-service/teachers
-    storage-service:
-        name: storage-service
-        base-url: http://storage-service/documents
+  student-service-student:
+    name: student-service
+    base-url: http://localhost:9090/dss/api/v1/students
+  student-service-guardian:
+    name: student-service
+    base-url: http://student-service/dss/api/v1/guardians
+  student-service-consent:
+    name: student-service
+    base-url: http://student-service/dss/api/v1/consents
+
+  teacher-service-teacher:
+    name: teacher-service
+    base-url: http://teacher-service/dss/api/v1/teachers
+  teacher-service-cours:
+    name: teacher-service
+    base-url: http://teacher-service/dss/api/v1/courses
+
+  school-service-school:
+    name: school-service
+    base-url: http://school-service/dss/api/v1/schools
+  school-service-class:
+    name: school-service
+    base-url: http://school-service/dss/api/v1/classes
+  school-service-address:
+    name: school-service
+    base-url: http://localhost:9090/dss/api/v1/addresses
+  school-service-employee:
+    name: school-service
+    base-url: http://school-service/dss/api/v1/employees
+
+  storage-service:
+    name: storage-service
+    base-url: http://localhost:9090/dss/api/v1/documents
+
 
 # JWT Properties expiration and refresh times (in milliseconds)
 jwt:
-    secret:
-        key: 8KvVu4Bn2KwBNX1MdnXY6VaRVLekVxurk3aaJxnzdCuZL6AHEL0EnnAOYLZtHWUr
-    access:
-        token:
-            expiration: 1800000 # 30 min in milliseconds for token expiration time
-    refresh:
-        token:
-            expiration: 604800000    # 7 days in milliseconds
+  secret:
+    key: 8KvVu4Bn2KwBNX1MdnXY6VaRVLekVxurk3aaJxnzdCuZL6AHEL0EnnAOYLZtHWUr
+  access:
+    token:
+      expiration: 1800000 # 30 min in milliseconds for token expiration time
+  refresh:
+    token:
+      expiration: 604800000 # 7 days in milliseconds
 student:
-    picture:
-        path: /home/abakar/programming/git_repos/dss/student_pictures/
+  picture:
+    path: /home/abakar/programming/git_repos/dss/student_pictures/

@@ -10,13 +10,17 @@ spring:
   servlet:
     multipart:
       enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   main:
     allow-bean-definition-overriding: true
+
+
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8762/eureka/
+      defaultZone: http://localhost:8761/eureka/
 
 services:
   student-service:

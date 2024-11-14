@@ -2,35 +2,34 @@ package com.bytmasoft.dss.service;
 
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.dto.*;
+import com.bytmasoft.dss.enums.DocumentType;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.service.GenericResponseService;
-import org.springdoc.webmvc.api.MultipleOpenApiWebMvcResource;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.cloud.client.loadbalancer.reactive.RetryableLoadBalancerExchangeFilterFunction;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
 @Service
 public class BFFService {
 
-    private final WebClient webClient;
-    private final StudentService studentService;
-    private final TeacherService teacherService;
-    private final SchoolService schoolService;
-    private final DocumentService docService;
-    private final ServicesProperties servicesProperties;
-   private final DocumentService documentService;
+private final WebClient webClient;
+private final StudentService studentService;
+private final TeacherService teacherService;
+private final SchoolService schoolService;
+private final DocumentService docService;
+private final ServicesProperties servicesProperties;
+private final DocumentService documentService;
 
 
-    public Mono<StudentDetailsDto> addStudentDetails(StudentDetailsDto studentDatailsDto, String jwtToken) {
+/*    public Mono<StudentDetailsDto> addStudentDetailsWithFiles(StudentDetailsDto studentDatailsDto, String jwtToken) {
 
         Mono<AddressDto> addressDtoMono = schoolService.saveAddress(studentDatailsDto.getAddressDto(), jwtToken);
+
 
         Mono<List<DocumentDto>> documentDtoList = addressDtoMono.flatMap(addressDto -> {
             studentDatailsDto.getStudent().setAddressId(addressDto.getId());
@@ -39,7 +38,7 @@ public class BFFService {
                     .fileName("Test.txt")
                     .originalFileName("Test.txt")
                     .build();
-            studentDatailsDto.setDocumentDto(documentDto);
+            studentDatailsDto.getDocumentDtos().addAll(documentDto);
             return docService.saveDocument(studentDatailsDto.getDocumentDto(), jwtToken);
         });
 
@@ -58,7 +57,7 @@ public class BFFService {
           return studentDatailsDto;
       });
 
-       /* return  Mono.zip(studentDtoMono, guardianDtoMono, addressDtoMono)
+       *//* return  Mono.zip(studentDtoMono, guardianDtoMono, addressDtoMono)
                 .map(tuple -> {
                  StudentDetailsDto result = StudentDetailsDto.builder()
                          .student(tuple.getT1())
@@ -66,61 +65,87 @@ public class BFFService {
                          .addressDto(tuple.getT3())
                          .build();
                  return result;
-                });*/
-    }
-
-
-    //return a compination of address, class, course, teacher, document
-    public Mono<StudentResponse> getStudentDetails(Long studentId, String jwtToken) {
-        // Call Student Service (note: use the service name from Eureka, not a hardcoded URL)
-        Mono<StudentDto> studentDtoMono = webClient
-                .get()
-                .uri(servicesProperties.getStudentServiceStudent().getBaseUrl()+"/"+studentId)
-                .header("Authorization", jwtToken)
-                .retrieve()
-                .bodyToMono(StudentDto.class);
-
-
-
-
-        // Call Teacher Service based on student response
-        Mono<AddressDto> addressDtoMono = studentDtoMono.flatMap( studentDto ->
-                webClient.get()
-                    .uri(servicesProperties.getSchoolServiceAddress().getBaseUrl()+"/{id}",studentDto.getAddressId())
-                        .header("Authorization", jwtToken)
-                        .retrieve()
-                        .bodyToMono(AddressDto.class));
-
-
-
-        return Mono.zip(studentDtoMono, addressDtoMono)
-                .map(tuple -> new StudentResponse(tuple.getT1(), tuple.getT2()));
-    }
-
-    public Mono<StudentDto> getStudent(Long studentId, String jwtToken) {
-      return  webClient
-                .get()
-                .uri(servicesProperties.getStudentServiceStudent().getBaseUrl()+"/"+studentId)
-                .header("Authorization", jwtToken)
-                .retrieve()
-                .bodyToMono(StudentDto.class);
-    }
-
-
-
-   /* public Mono<BffResponseDTO> getBffData(Long studentId, Long teacherId, Long documentId) {
-
-        return Mono.zip(
-                studentService.getStudentById(studentId),
-                teacherService.getTeacherById(teacherId),
-                documentService.getDocumentById(documentId)
-        ).map(tuple -> {
-            BffResponseDTO response = new BffResponseDTO();
-            response.setStudent(tuple.getT1());
-            response.setTeacher(tuple.getT2());
-            response.setDocument(tuple.getT3());
-            return response;
-        });
+                });*//*
     }*/
+
+
+//return a compination of address, class, course, teacher, document
+public Mono<StudentResponse> getStudentDetails(Long studentId, String jwtToken) {
+	// Call Student Service (note: use the service name from Eureka, not a hardcoded URL)
+	Mono<StudentDto> studentDtoMono = webClient
+			                                  .get()
+			                                  .uri(servicesProperties.getStudentServiceStudent().getBaseUrl() + "/" + studentId)
+			                                  .header("Authorization", jwtToken)
+			                                  .retrieve()
+			                                  .bodyToMono(StudentDto.class);
+
+
+	// Call Teacher Service based on student response
+	Mono<AddressDto> addressDtoMono = studentDtoMono.flatMap(studentDto ->
+			                                                         webClient.get()
+					                                                         .uri(servicesProperties.getSchoolServiceAddress().getBaseUrl() + "/{id}", studentDto.getAddressId())
+					                                                         .header("Authorization", jwtToken)
+					                                                         .retrieve()
+					                                                         .bodyToMono(AddressDto.class));
+
+
+	return Mono.zip(studentDtoMono, addressDtoMono)
+			       .map(tuple -> new StudentResponse(tuple.getT1(), tuple.getT2()));
+}
+
+public Mono<StudentDto> getStudent(Long studentId, String jwtToken) {
+	return webClient
+			       .get()
+			       .uri(servicesProperties.getStudentServiceStudent().getBaseUrl() + "/" + studentId)
+			       .header("Authorization", jwtToken)
+			       .retrieve()
+			       .bodyToMono(StudentDto.class);
+}
+
+public Mono<StudentDetailsDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto, List<MultipartFile> files, List<DocumentType> documentTypes, String jwtToken) {
+
+	return schoolService.saveAddress(studentDetailsCreateDto.getAddressCreateDto(), jwtToken)
+			       .doOnNext(addressDto -> {
+				       System.out.println("Address saved with ID: " + addressDto.getId());
+
+				       studentDetailsCreateDto.getStudentCreateDto().setAddressId(addressDto.getId());
+				       studentDetailsCreateDto.getGuardianCreateDto().setAddressId(addressDto.getId());
+			       })
+			       .flatMap(addressDto -> {
+				       System.out.println("Saving student with address ID: " + addressDto.getId());
+				       List<GuardianCreateDto> guardianCreateDtoList = new ArrayList<>();
+				       guardianCreateDtoList.add(studentDetailsCreateDto.getGuardianCreateDto());
+
+				       if (studentDetailsCreateDto.getStudentCreateDto().getGuardianCreateDtos() == null) {
+					       studentDetailsCreateDto.getStudentCreateDto().setGuardianCreateDtos(new ArrayList<>());
+					       studentDetailsCreateDto.getStudentCreateDto().getGuardianCreateDtos().addAll(guardianCreateDtoList);
+
+				       }
+				       return studentService.saveStudent(studentDetailsCreateDto.getStudentCreateDto(), jwtToken);
+			       })
+			       .doOnNext(studentResponseDto -> {
+				       System.out.println("Student saved with ID: " + studentResponseDto.getId());
+			       })
+			       .flatMap(studentDto -> {
+				       System.out.println("Uploading documents for student ID: " + studentDto.getId());
+				       return documentService.uploadDocuments(files, documentTypes, studentDto.getId(), jwtToken)
+						              .map(documents -> {
+
+							              StudentDetailsDto studentDetailsDto =
+									              com.bytmasoft.dss.dto.StudentDetailsDto.builder()
+											              .documentDtos(documents)
+											              //.studentDto(studentResponseDto)
+											              .build();
+
+							              return studentDetailsDto;
+						              });
+			       })
+			       .doOnError(e -> System.err.println("Error in chain: " + e.getMessage()))
+			       .onErrorResume(e -> {
+				       // Ensure errors are caught and logged
+				       return Mono.error(new RuntimeException("Failed to complete process", e));
+			       });
+}
+
 
 }

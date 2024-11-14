@@ -2,13 +2,18 @@ package com.bytmasoft.dss.config;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.security.SecuritySchemes;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.context.annotation.Configuration;
 
-/*@OpenAPIDefinition(
+@OpenAPIDefinition(
 
         info = @Info(
                 contact = @Contact(
@@ -16,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
                         email = "abakar61@web.de",
                         url = ""
                 ),
-                description = "OpenApi for BFF Service",
-                title = "BFF Service",
+                description = "OpenApi for backend for frontend Service",
+                title = "BFF",
                 version = "1.0",
                 license = @License(
                         name = "Licence name",
@@ -26,9 +31,13 @@ import org.springframework.context.annotation.Configuration;
                 termsOfService = "Term of Service"
 
         ),
+        tags = {
+                @Tag(name = "BFF", description = "Backend for frontend Service for all requests")
+        },
+
         //,
         //,
-        *//* servers = {
+        /* servers = {
 
                  @Server(
                          description = "Local ENV",
@@ -38,7 +47,7 @@ import org.springframework.context.annotation.Configuration;
                          description = "Prod ENV",
                          url = "http://www.prod:8081"
                  )
-         },*//*
+         },*/
         security = {
                 @SecurityRequirement(
                         name = "BearerAuth"
@@ -56,18 +65,8 @@ import org.springframework.context.annotation.Configuration;
                         in = SecuritySchemeIn.HEADER
                 )
         }
-)*/
-//@Configuration
+)
 @Configuration
-@OpenAPIDefinition(
-        info = @Info(title = "BFF API", version = "v1"),
-        security = @SecurityRequirement(name = "bearerAuth")  // Add Security Requirement here
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
-)
 public class OpenApiConfig {
+
 }

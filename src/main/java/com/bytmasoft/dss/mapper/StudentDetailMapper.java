@@ -1,11 +1,7 @@
 package com.bytmasoft.dss.mapper;
 
-import com.bytmasoft.dss.dto.StudentDto;
-import com.bytmasoft.dss.entity.Course;
-import com.bytmasoft.dss.entity.Student;
-import com.bytmasoft.dss.entity.Teacher;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;

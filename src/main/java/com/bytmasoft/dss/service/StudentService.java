@@ -4,6 +4,7 @@ import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
 import com.bytmasoft.dss.dto.GuardianDto;
 import com.bytmasoft.dss.dto.StudentDto;
+import com.bytmasoft.dss.dto.StudentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,29 +15,31 @@ import reactor.core.publisher.Mono;
 @Service
 public class StudentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
-    private final WebClientUtil webClientUtil;
-    private final ServicesProperties servicesProperties;
+private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
+private final WebClientUtil webClientUtil;
+private final ServicesProperties servicesProperties;
 
 
-    public Mono<StudentDto> saveStudent(StudentDto studentDto, String token) {
-        return webClientUtil.post(servicesProperties.getStudentServiceStudent().getBaseUrl(),studentDto, StudentDto.class, token);
-    }
+public Mono<StudentResponseDto> saveStudent(com.bytmasoft.dss.dto.StudentCreateDto studentCreateDto, String token) {
+	System.out.println("Student url : " + servicesProperties.getStudentServiceStudent().getBaseUrl());
+	System.out.printf("studentCreateDto : " + studentCreateDto.toString());
+	return webClientUtil.saveEntity(servicesProperties.getStudentServiceStudent().getBaseUrl(), studentCreateDto, StudentResponseDto.class, token);
+}
 
-    
-    public Mono<StudentDto> getStudentDto(Long studentId, String jwtToken) {
-        logger.info("Starting request to fetch student with ID: {}", studentId);
 
-        return webClientUtil.get(servicesProperties.getStudentServiceStudent().getBaseUrl()+studentId, StudentDto.class)
+public Mono<StudentDto> getStudentDto(Long studentId, String jwtToken) {
+	logger.info("Starting request to fetch student with ID: {}", studentId);
 
-                .doOnSuccess(student -> logger.info("Successfully fetched student data: {}", student))
-                .doOnError(throwable -> logger.error("Failed to fetch student for ID: {}", studentId, throwable));
-    }
+	return webClientUtil.get(servicesProperties.getStudentServiceStudent().getBaseUrl() + studentId, StudentDto.class)
 
-    public Mono<GuardianDto> saveGuardian(GuardianDto guardianDto, String jwtToken) {
-        return webClientUtil.post(servicesProperties.getStudentServiceGuardian().getBaseUrl(), guardianDto, GuardianDto.class, jwtToken);
+			       .doOnSuccess(student -> logger.info("Successfully fetched student data: {}", student))
+			       .doOnError(throwable -> logger.error("Failed to fetch student for ID: {}", studentId, throwable));
+}
 
-    }
+public Mono<GuardianDto> saveGuardian(GuardianDto guardianDto, String jwtToken) {
+	return webClientUtil.post(servicesProperties.getStudentServiceGuardian().getBaseUrl(), guardianDto, GuardianDto.class, jwtToken);
+
+}
 
 
 //    

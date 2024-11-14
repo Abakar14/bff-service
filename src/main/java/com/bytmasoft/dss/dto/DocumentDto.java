@@ -1,16 +1,25 @@
 package com.bytmasoft.dss.dto;
 
-import lombok.AllArgsConstructor;
+import com.bytmasoft.dss.enums.DocumentType;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 public class DocumentDto {
-    private Long id;
-    private String fileName;
-    private String originalFileName;
-    private String filePath;
-    private Integer version;
+private Long id;
+private Long ownerId;
+private String fileName;
+private String filePath;
+private Integer version;
+private String addedBy;
+private String modifiedBy;
+private DocumentType documentType;
+private LocalDateTime addedOn;
+private LocalDateTime modifiedOn;
+private String originalFileName;
+private boolean deleted;
+private boolean isArchived;
 }

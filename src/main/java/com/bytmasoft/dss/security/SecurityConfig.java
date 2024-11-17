@@ -20,42 +20,44 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private static final String[] SERVICE_WHITE_LIST_URL = {
-            "/v2/api-docs",
-            "/v3/api-docs",
-            "/v3/api-docs/**",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui/**",
-            "/webjars/**",
-            "/swagger-ui.html"
+private static final String[] SERVICE_WHITE_LIST_URL = {
+		"/v2/api-docs",
+		"/v3/api-docs",
+		"/v3/api-docs/**",
+		"/swagger-resources",
+		"/swagger-resources/**",
+		"/configuration/ui",
+		"/configuration/security",
+		"/swagger-ui/**",
+		"/webjars/**",
+		"/swagger-ui.html"
 
-    };
+};
 
-    private final JwtUtil jwtUtil;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+private final JwtUtil jwtUtil;
+private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
 
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(SERVICE_WHITE_LIST_URL).permitAll();
-                    auth.anyRequest().authenticated();
-                })
+	return http
 
-                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-                .build();
+			       //.csrf(csrf -> csrf.disable())
+			       .csrf(AbstractHttpConfigurer::disable)
+			       .authorizeHttpRequests(auth -> {
+				       auth.requestMatchers(SERVICE_WHITE_LIST_URL).permitAll();
+				       auth.anyRequest().authenticated();
+			       })
 
-    }
+			       .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+			       .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+			       .build();
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+}
+
+@Bean
+public PasswordEncoder passwordEncoder() {
+	return new BCryptPasswordEncoder();
+}
 
 }

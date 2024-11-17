@@ -2,6 +2,7 @@ package com.bytmasoft.dss.dto;
 
 import com.bytmasoft.dss.enums.CommunicationType;
 import com.bytmasoft.dss.enums.Gender;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @Data
 @Builder
+@AllArgsConstructor
 public class StudentDto {
 
 private Long id;

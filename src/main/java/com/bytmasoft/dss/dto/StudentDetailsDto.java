@@ -11,7 +11,6 @@ public class StudentDetailsDto {
 
 private StudentDto studentDto;
 private AddressDto addressDto;
-private GuardianDto guardianDto;
 private List<DocumentDto> documentDtos;
 
 

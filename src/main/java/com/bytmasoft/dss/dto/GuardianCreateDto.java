@@ -1,9 +1,15 @@
 package com.bytmasoft.dss.dto;
 
-@lombok.Data
-@lombok.Builder
-public class GuardianCreateDto {
+import com.bytmasoft.dss.enums.CommunicationType;
+import com.bytmasoft.dss.enums.ContactLevel;
+import com.bytmasoft.dss.enums.Gender;
+import com.bytmasoft.dss.enums.Relationship;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
+@Builder
+public class GuardianCreateDto {
 
 private String firstName;
 private String lastName;
@@ -11,11 +17,11 @@ private String country;
 private String email;
 private String mobile;
 private String phone;
-private com.bytmasoft.dss.enums.Gender gender;
-private com.bytmasoft.dss.enums.Relationship relationship;
-private com.bytmasoft.dss.enums.ContactLevel contactLevel;
+private Gender gender;
+private Relationship relationship;
+private ContactLevel contactLevel;
 private Long addressId;
-private com.bytmasoft.dss.enums.CommunicationType communicationType;
+private CommunicationType communicationType;
 
 
 }

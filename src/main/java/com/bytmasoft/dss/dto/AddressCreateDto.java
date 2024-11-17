@@ -1,7 +1,10 @@
 package com.bytmasoft.dss.dto;
 
-@lombok.Data
-@lombok.Builder
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 public class AddressCreateDto {
 private String city;
 private String country;

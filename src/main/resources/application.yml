@@ -15,8 +15,6 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-
-
 eureka:
   client:
     service-url:
@@ -33,9 +31,13 @@ services:
     name: storage-service
     base-url: http://storage-service/documents
 
+
 logging:
   level:
-    org.springframework.security: DEBUG
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG
 
 # JWT Properties expiration and refresh times (in milliseconds)
 # Secret key

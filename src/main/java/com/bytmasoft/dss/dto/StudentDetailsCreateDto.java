@@ -6,11 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class StudentDetailsCreateDto {
-
 private StudentCreateDto studentCreateDto;
 private AddressCreateDto addressCreateDto;
-private GuardianCreateDto guardianCreateDto;
-
-public java.util.List<DocumentDto> documentDtos;
+//private GuardianCreateDto guardianCreateDto;
 
 }

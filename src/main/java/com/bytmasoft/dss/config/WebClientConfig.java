@@ -8,9 +8,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Bean
-    @LoadBalanced  // Important: Enables service discovery and load balancing
-    public WebClient webClient(WebClient.Builder builder) {
-        return builder.build();
-    }
+@Bean
+@LoadBalanced  // Important: Enables service discovery and load balancing
+public WebClient webClient(WebClient.Builder builder) {
+	return builder.build();
+}
+
 }

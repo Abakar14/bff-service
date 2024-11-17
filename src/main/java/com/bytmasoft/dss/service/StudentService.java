@@ -3,8 +3,8 @@ package com.bytmasoft.dss.service;
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
 import com.bytmasoft.dss.dto.GuardianDto;
+import com.bytmasoft.dss.dto.StudentCreateDto;
 import com.bytmasoft.dss.dto.StudentDto;
-import com.bytmasoft.dss.dto.StudentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,10 @@ private final WebClientUtil webClientUtil;
 private final ServicesProperties servicesProperties;
 
 
-public Mono<StudentResponseDto> saveStudent(com.bytmasoft.dss.dto.StudentCreateDto studentCreateDto, String token) {
+public Mono<StudentDto> saveStudent(StudentCreateDto studentCreateDto, String token) {
 	System.out.println("Student url : " + servicesProperties.getStudentServiceStudent().getBaseUrl());
 	System.out.printf("studentCreateDto : " + studentCreateDto.toString());
-	return webClientUtil.saveEntity(servicesProperties.getStudentServiceStudent().getBaseUrl(), studentCreateDto, StudentResponseDto.class, token);
+	return webClientUtil.saveEntity(servicesProperties.getStudentServiceStudent().getBaseUrl(), studentCreateDto, StudentDto.class, token);
 }
 
 

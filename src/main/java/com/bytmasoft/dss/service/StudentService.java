@@ -22,15 +22,14 @@ private final ServicesProperties servicesProperties;
 
 public Mono<StudentDto> saveStudent(StudentCreateDto studentCreateDto, String token) {
 	System.out.println("Student url : " + servicesProperties.getStudentServiceStudent().getBaseUrl());
-	System.out.printf("studentCreateDto : " + studentCreateDto.toString());
+	logger.debug("Received studentCreateDto: {}", studentCreateDto.toString());
 	return webClientUtil.saveEntity(servicesProperties.getStudentServiceStudent().getBaseUrl(), studentCreateDto, StudentDto.class, token);
 }
-
 
 public Mono<StudentDto> getStudentDto(Long studentId, String jwtToken) {
 	logger.info("Starting request to fetch student with ID: {}", studentId);
 
-	return webClientUtil.get(servicesProperties.getStudentServiceStudent().getBaseUrl() + studentId, StudentDto.class)
+	return webClientUtil.get(servicesProperties.getStudentServiceStudent().getBaseUrl() + studentId, StudentDto.class, jwtToken)
 
 			       .doOnSuccess(student -> logger.info("Successfully fetched student data: {}", student))
 			       .doOnError(throwable -> logger.error("Failed to fetch student for ID: {}", studentId, throwable));

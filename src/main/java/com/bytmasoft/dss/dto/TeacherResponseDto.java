@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 
 @Builder
-public class TeacherDto {
+public class TeacherResponseDto {
 
-    private TeacherDto teacher;
+private TeacherResponseDto teacher;
 }

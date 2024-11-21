@@ -2,7 +2,8 @@ package com.bytmasoft.dss.service;
 
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
-import com.bytmasoft.dss.dto.TeacherDto;
+import com.bytmasoft.dss.dto.TeacherCreateDto;
+import com.bytmasoft.dss.dto.TeacherResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +18,20 @@ private static final Logger logger = LoggerFactory.getLogger(TeacherService.clas
 private final WebClientUtil webClientUtil;
 private final ServicesProperties servicesProperties;
 
-public Mono<TeacherDto> getTeacherById(Long teacherId, String jwtToken) {
-	logger.info("Starting request to fetch teacher with ID: {}", teacherId);
-	return webClientUtil.get(servicesProperties.getTeacherServiceTeacher().getBaseUrl() + teacherId, TeacherDto.class)
-			       .doOnSuccess(teacher -> logger.info("Successfully fetched teacher data: {}", teacher))
-			       .doOnError(throwable -> logger.error("Failed to fetch teacher for ID: {}", teacherId, throwable));
+
+public Mono<TeacherResponseDto> saveTeacher(TeacherCreateDto teacherCreateDto, String jwtToken) {
+	System.out.println("Teacher url : " + servicesProperties.getTeacherServiceTeacher().getBaseUrl());
+	System.out.printf("teacherCreateDto : " + teacherCreateDto.toString());
+
+	return webClientUtil.post(servicesProperties.getTeacherServiceTeacher().getBaseUrl(), teacherCreateDto, TeacherResponseDto.class, jwtToken);
 }
 
+
+public Mono<TeacherResponseDto> getTeacher(Long id, String jwtToken) {
+	System.out.println("Address url : " + servicesProperties.getTeacherServiceTeacher().getBaseUrl());
+	System.out.printf("addressId : " + id);
+	return webClientUtil.get(servicesProperties.getTeacherServiceTeacher().getBaseUrl(), TeacherResponseDto.class, jwtToken);
 }
 
 
+}

@@ -1,8 +1,9 @@
 package com.bytmasoft.dss.controller;
 
 import com.bytmasoft.dss.dto.StudentDetailsCreateDto;
-import com.bytmasoft.dss.dto.StudentDetailsDto;
+import com.bytmasoft.dss.dto.StudentDetailsResponseDto;
 import com.bytmasoft.dss.enums.DocumentType;
+import com.bytmasoft.dss.enums.OwnerType;
 import com.bytmasoft.dss.service.BFFService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -28,30 +29,31 @@ private final BFFService bffService;
 
 @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 @PostMapping(value = "/student-details", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-public StudentDetailsDto addStudentDetails(@RequestPart("studentDetailsCreateDto") StudentDetailsCreateDto studentDetailsCreateDto,
-                                           @RequestPart("files") List<MultipartFile> files,
-                                           @RequestParam("documentTypes") List<DocumentType> documentTypes,
-                                           @RequestHeader("Authorization") String jwtToken) {
+public StudentDetailsResponseDto addStudentDetails(@RequestPart("studentDetailsCreateDto") StudentDetailsCreateDto studentDetailsCreateDto,
+                                                   @RequestPart("files") List<MultipartFile> files,
+                                                   @RequestParam("documentTypes") List<DocumentType> documentTypes,
+                                                   @RequestParam("ownerType") OwnerType ownerType,
+                                                   @RequestHeader("Authorization") String jwtToken) {
 
 	logger.debug("Received StudentDetailsCreateDto: {}", studentDetailsCreateDto);
 	logger.debug("Received Files: {}", files.size());
 	logger.debug("Received Document Types: {}", documentTypes);
+	logger.debug("Received Owner Type: {}", ownerType);
 
-	return bffService.addStudentDetailsWithFiles(studentDetailsCreateDto, files, documentTypes, jwtToken)
+	System.out.println("Received StudentDetailsCreateDto: {}" + studentDetailsCreateDto.toString());
+	System.out.println("Received Files: {}" + files.size());
+	System.out.println("Received Document Types: {}" + documentTypes);
+	System.out.println("Received Owner Type: {}" + ownerType);
+
+	return bffService.addStudentDetailsWithFiles(studentDetailsCreateDto, files, documentTypes, ownerType, jwtToken)
 			       .switchIfEmpty(Mono.error(new IllegalStateException("No response generated"))).block();
 }
 
 @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-@PostMapping(value = "/test", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public StudentDetailsDto addStudentDetails(
-		@RequestPart("studentDetailsCreateDto") StudentDetailsCreateDto studentDetailsCreateDto,
-		@RequestPart("files") List<MultipartFile> files,
-		@RequestHeader("Authorization") String jwtToken
-) {
+@GetMapping("/{id}")
+public StudentDetailsResponseDto getStudentDetails(@PathVariable Long id, @RequestHeader("Authorization") String jwtToken) {
+	return bffService.getStudentDetails(id, jwtToken);
 
-
-	System.out.println("Received DTO: " + studentDetailsCreateDto + " filename " + files.get(0).getOriginalFilename());
-	return bffService.test(studentDetailsCreateDto, jwtToken);
 }
 
 

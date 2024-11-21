@@ -27,10 +27,11 @@ private final ObjectPostProcessor objectPostProcessor;
 private final GenericResponseService responseBuilder;
 
 
-public <T> Mono<T> get(String uri, Class<T> responseType) {
+public <T> Mono<T> get(String uri, Class<T> responseType, String jwtToken) {
 	logger.debug("Making GET request to: {}", uri);
 	return webClient.get()
 			       .uri(uri)
+			       .header("Authorization", jwtToken)
 			       .retrieve()
 			       .bodyToMono(responseType)
 			       .retryWhen(Retry.fixedDelay(fixedDelay, Duration.ofSeconds(duration)))

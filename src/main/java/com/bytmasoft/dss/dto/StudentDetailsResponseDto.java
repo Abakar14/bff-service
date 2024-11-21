@@ -7,11 +7,9 @@ import java.util.List;
 
 @Data
 @Builder
-public class StudentDetailsDto {
+public class StudentDetailsResponseDto {
 
 private StudentDto studentDto;
-private AddressDto addressDto;
+private AddressResponseDto addressDto;
 private List<DocumentDto> documentDtos;
-
-
 }

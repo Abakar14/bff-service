@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class AddressDto {
+public class AddressResponseDto {
 
 private Long id;
 private String city;

@@ -3,6 +3,7 @@ package com.bytmasoft.dss.service;
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.dto.*;
 import com.bytmasoft.dss.enums.DocumentType;
+import com.bytmasoft.dss.enums.OwnerType;
 import com.bytmasoft.dss.exception.CustomProcessingException;
 import com.bytmasoft.dss.utils.BFFUtils;
 import lombok.RequiredArgsConstructor;
@@ -32,39 +33,61 @@ private final DocumentService documentService;
 private final BFFUtils bffUtils;
 
 
-public Mono<StudentDto> getStudent(Long studentId, String jwtToken) {
-	return webClient
-			       .get()
-			       .uri(servicesProperties.getStudentServiceStudent().getBaseUrl() + "/" + studentId)
-			       .header("Authorization", jwtToken)
-			       .retrieve()
-			       .bodyToMono(StudentDto.class);
+public StudentDetailsResponseDto getStudentDetailsResponseDto(Long id, String jwtToken) {
+
+	getStudentDetails(id, jwtToken)
+			.flatMap(studentResponseDto -> getTeachers(studentResponseDto, jwtToken))
+			.flatMap()
+	// 1- get student 2- get profile picture
+	// 3- get teachers 4- get class info
+	// 5- get guardian
+	// 6- get Address ==> ok
+	// 7- get School name ==> ok
+
+	return null;
 }
 
-public Mono<StudentDetailsDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto,
-                                                          List<MultipartFile> files, List<DocumentType> documentTypes,
-                                                          String jwtToken) {
+private Mono<SchoolResponseDto> getSchoolResponseDto(StudentResponseDto studentResponseDto, String jwtToken) {
+	return nuul;
+}
+private Mono<List<AddressResponseDto>> getAddress(StudentResponseDto studentResponseDto, String jwtToken) {
+	return nuul;
+}
+private Mono<List<GuardianResponseDto>> getGuardian(StudentResponseDto studentResponseDto, String jwtToken) {
+	return nuul;
+}
+private Mono<List<TeacherResponseDto>> getTeachers(StudentResponseDto studentResponseDto, String jwtToken) {
+	return nuul;
+}
+private Mono<StudentResponseDto> getStudentDetails(Long id, String jwtToken) {
+	return nuul;
+}
+
+
+public Mono<StudentDetailsResponseDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto,
+                                                                  List<MultipartFile> files, List<DocumentType> documentTypes,
+                                                                  OwnerType ownerType,
+                                                                  String jwtToken) {
 	// Log request details
 	logger.info("Adding student details with files for user: {}", bffUtils.getUsername());
 
 	return saveAddress(studentDetailsCreateDto.getAddressCreateDto(), jwtToken)
 			       .flatMap(addressDto -> processStudent(studentDetailsCreateDto, addressDto, jwtToken))
-			       .flatMap(studentDetailsDto -> uploadDocumentsForStudent(studentDetailsDto, files, documentTypes, jwtToken))
+			       .flatMap(studentDetailsDto -> uploadDocumentsForStudent(studentDetailsDto, files, documentTypes, ownerType, jwtToken))
 			       .doOnSuccess(result -> logger.info("Successfully processed student details: {}", result))
 			       .doOnError(e -> logger.error("Failed to process student details: {}", e.getMessage(), e))
 			       .onErrorResume(e -> Mono.error(new CustomProcessingException("Failed to process student details", e)));
 }
 
-private Mono<AddressDto> saveAddress(AddressCreateDto addressDto, String jwtToken) {
+private Mono<AddressResponseDto> saveAddress(AddressCreateDto addressDto, String jwtToken) {
 	logger.debug("Saving address: {}", addressDto);
 	return schoolService.saveAddress(addressDto, jwtToken)
 			       .doOnSuccess(savedAddress -> logger.info("Address saved with ID: {}", savedAddress.getId()));
 }
 
 
-private Mono<StudentDetailsDto> processStudent(StudentDetailsCreateDto studentDetailsCreateDto,
-                                               AddressDto addressDto, String jwtToken) {
-
+private Mono<StudentDetailsResponseDto> processStudent(StudentDetailsCreateDto studentDetailsCreateDto,
+                                                       AddressResponseDto addressDto, String jwtToken) {
 	// Update student and guardian with address ID
 	studentDetailsCreateDto.getStudentCreateDto().setAddressId(addressDto.getId());
 	studentDetailsCreateDto.getStudentCreateDto().getGuardianCreateDtos().forEach(guardian -> {
@@ -74,20 +97,20 @@ private Mono<StudentDetailsDto> processStudent(StudentDetailsCreateDto studentDe
 	return studentService.saveStudent(studentDetailsCreateDto.getStudentCreateDto(), jwtToken)
 			       .map(studentDto -> {
 				       logger.info("Student saved with ID: {}", studentDto.getId());
-				       return StudentDetailsDto.builder()
+				       return StudentDetailsResponseDto.builder()
 						              .studentDto(studentDto)
 						              .addressDto(addressDto)
 						              .build();
 			       });
 }
 
-private Mono<StudentDetailsDto> uploadDocumentsForStudent(StudentDetailsDto studentDetailsDto,
-                                                          List<MultipartFile> files, List<DocumentType> documentTypes, String jwtToken) {
+private Mono<StudentDetailsResponseDto> uploadDocumentsForStudent(StudentDetailsResponseDto studentDetailsDto,
+                                                                  List<MultipartFile> files, List<DocumentType> documentTypes, OwnerType ownerType, String jwtToken) {
 
 	Long studentId = studentDetailsDto.getStudentDto().getId();
 	logger.debug("Uploading documents for student ID: {}", studentId);
 
-	return documentService.uploadDocuments(files, documentTypes, studentId, jwtToken)
+	return documentService.uploadDocuments(files, documentTypes, ownerType, studentId, jwtToken)
 			       .map(documents -> {
 				       logger.info("Uploaded {} documents for student ID: {}", documents.size(), studentId);
 				       studentDetailsDto.setDocumentDtos(documents);
@@ -96,52 +119,5 @@ private Mono<StudentDetailsDto> uploadDocumentsForStudent(StudentDetailsDto stud
 }
 
 
-/*public Mono<StudentDetailsDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto, List<MultipartFile> files, List<DocumentType> documentTypes, String jwtToken) {
 
-	StudentDetailsDto studentDetailsDto = StudentDetailsDto.builder().build();
-	System.out.println("Username from context : " + bffUtils.getUsername());
-
-	return schoolService.saveAddress(studentDetailsCreateDto.getAddressCreateDto(), jwtToken)
-			       .doOnNext(addressDto -> {
-				       System.out.println("Address saved with ID: " + addressDto.getId());
-
-				       studentDetailsCreateDto.getStudentCreateDto().setAddressId(addressDto.getId());
-				       studentDetailsCreateDto.getStudentCreateDto().getGuardianCreateDtos().forEach(guardianCreateDto -> {
-					       guardianCreateDto.setAddressId(addressDto.getId());
-				       });
-
-				       studentDetailsDto.setAddressDto(addressDto);
-			       })
-			       .flatMap(addressDto -> {
-				       return studentService.saveStudent(studentDetailsCreateDto.getStudentCreateDto(), jwtToken);
-			       })
-			       .doOnNext(studentDto -> {
-				       System.out.println("Student saved with ID: " + studentDto.getId());
-				       studentDetailsDto.setStudentDto(studentDto);
-			       })
-			       .flatMap(studentDto -> {
-				       System.out.println("Uploading documents for student ID: " + studentDto.getId());
-				       return documentService.uploadDocuments(files, documentTypes, studentDto.getId(), jwtToken)
-						              .map(documents -> {
-
-							              studentDetailsDto.setDocumentDtos(documents);
-
-							              return studentDetailsDto;
-						              });
-			       })
-			       .doOnError(e -> System.err.println("Error in chain: " + e.getMessage()))
-			       .onErrorResume(e -> {
-				       // Ensure errors are caught and logged
-				       return Mono.error(new RuntimeException("Failed to complete process", e));
-			       });
-}*/
-
-
-public StudentDetailsDto test(StudentDetailsCreateDto studentDetailsCreateDto, String jwtToken) {
-	return StudentDetailsDto.builder()
-			       .studentDto(StudentDto.builder()
-					                   .firstName("John")
-					                   .build())
-			       .build();
-}
 }

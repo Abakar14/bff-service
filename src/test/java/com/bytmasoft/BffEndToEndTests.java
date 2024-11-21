@@ -109,9 +109,9 @@ void testAddStudentDetails() throws Exception {
 	bodyBuilder.part("ownerId", "123");
 
 	// Mock service response
-	StudentDetailsDto mockResponse = StudentDetailsDto.builder()
-			                                 .studentDto(StudentDto.builder().firstName("John").build())
-			                                 .build();
+	StudentDetailsResponseDto mockResponse = StudentDetailsResponseDto.builder()
+			                                         .studentDto(StudentDto.builder().firstName("John").build())
+			                                         .build();
 
 	Mockito.when(bffService.addStudentDetailsWithFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
 			.thenReturn(Mono.just(mockResponse));
@@ -124,7 +124,7 @@ void testAddStudentDetails() throws Exception {
 			.body(BodyInserters.fromMultipartData(bodyBuilder.build()))
 			.exchange()
 			.expectStatus().isOk()
-			.expectBody(StudentDetailsDto.class)
+			.expectBody(StudentDetailsResponseDto.class)
 			.value(response -> {
 				assertNotNull(response);
 				assertEquals("John", response.getStudentDto().getFirstName());

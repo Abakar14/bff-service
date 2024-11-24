@@ -14,5 +14,5 @@ private String city;
 private String country;
 private String street;
 private String streetNumber;
-private String zipCode;
+private String postalCode;
 }

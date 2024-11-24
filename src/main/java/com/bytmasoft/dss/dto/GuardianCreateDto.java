@@ -11,6 +11,7 @@ import lombok.Data;
 @Builder
 public class GuardianCreateDto {
 
+private Long schoolId;
 private String firstName;
 private String lastName;
 private String country;

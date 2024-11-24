@@ -2,6 +2,7 @@ package com.bytmasoft.dss.service;
 
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
+import com.bytmasoft.dss.dto.StudentResponseDto;
 import com.bytmasoft.dss.dto.TeacherCreateDto;
 import com.bytmasoft.dss.dto.TeacherResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +35,8 @@ public Mono<TeacherResponseDto> getTeacher(Long id, String jwtToken) {
 }
 
 
+public Mono<TeacherResponseDto> getTeachers(StudentResponseDto studentResponseDto, String jwtToken) {
+
+	return webClientUtil.get(servicesProperties.getTeacherServiceTeacher().getBaseUrl(), TeacherResponseDto.class, jwtToken);
+}
 }

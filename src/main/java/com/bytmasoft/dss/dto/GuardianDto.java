@@ -14,6 +14,7 @@ import lombok.Data;
 public class GuardianDto {
 
 private Long id;
+private Long schoolId;
 private String firstName;
 private String lastName;
 private String country;

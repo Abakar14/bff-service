@@ -53,6 +53,9 @@ void setUp() {
 @Test
 void testAddStudentDetails() throws Exception {
 	// Mock input data
+
+
+
 	StudentDetailsCreateDto studentDetailsCreateDto = StudentDetailsCreateDto.builder()
 			                                                  .studentCreateDto(StudentCreateDto.builder()
 					                                                                    .firstName("John")
@@ -64,24 +67,23 @@ void testAddStudentDetails() throws Exception {
 					                                                                    .email("john.doe@example.com")
 					                                                                    .mobile("1234567890")
 					                                                                    .phone("0987654321")
-					                                                                    .build())
-			                                                  .addressCreateDto(AddressCreateDto.builder()
-					                                                                    .city("Berlin")
-					                                                                    .country("Germany")
-					                                                                    .street("Main Street")
-					                                                                    .streetNumber("123")
-					                                                                    .zipCode("10115")
-					                                                                    .build())
-			                                                  .guardianCreateDto(GuardianCreateDto.builder()
-					                                                                     .firstName("Jane")
-					                                                                     .lastName("Doe")
-					                                                                     .country("Germany")
-					                                                                     .email("jane.doe@example.com")
-					                                                                     .mobile("0987654321")
-					                                                                     .phone("1234567890")
-					                                                                     .gender(Gender.FEMALE)
-					                                                                     .build())
-			                                                  .build();
+					                                                                    .build()
+					                                                                    .
+					                                                                    .getGuardianCreateDtos().add(
+							                                                  GuardianCreateDto.builder()
+									                                                  .firstName("Jane")
+									                                                  .lastName("Doe")
+									                                                  .country("Germany")
+									                                                  .email("jane.doe@example.com")
+									                                                  .mobile("0987654321")
+									                                                  .phone("1234567890")
+									                                                  .gender(Gender.FEMALE)
+									                                                  .build());
+
+
+
+
+
 
 	byte[] file1Content = "Sample content for file 1".getBytes(StandardCharsets.UTF_8);
 	byte[] file2Content = "Sample content for file 2".getBytes(StandardCharsets.UTF_8);
@@ -109,11 +111,11 @@ void testAddStudentDetails() throws Exception {
 	bodyBuilder.part("ownerId", "123");
 
 	// Mock service response
-	StudentDetailsResponseDto mockResponse = StudentDetailsResponseDto.builder()
-			                                         .studentDto(StudentDto.builder().firstName("John").build())
-			                                         .build();
+	StudentResponseDto mockResponse = StudentResponseDto.builder()
+			                                  .firstName("John")
+			                                  .build();
 
-	Mockito.when(bffService.addStudentDetailsWithFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+	Mockito.when(bffService.addStudentDetailsWithFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
 			.thenReturn(Mono.just(mockResponse));
 
 	// Make the request
@@ -127,12 +129,12 @@ void testAddStudentDetails() throws Exception {
 			.expectBody(StudentDetailsResponseDto.class)
 			.value(response -> {
 				assertNotNull(response);
-				assertEquals("John", response.getStudentDto().getFirstName());
+				assertEquals("John", response.getStudentResponseDto().getFirstName());
 			});
 
 	// Verify interaction
 	Mockito.verify(bffService, Mockito.times(1))
-			.addStudentDetailsWithFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+			.addStudentDetailsWithFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 
 }
 

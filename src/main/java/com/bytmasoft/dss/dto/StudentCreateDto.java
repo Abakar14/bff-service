@@ -21,7 +21,7 @@ private String birthPlace;
 private Gender gender;
 
 private String birthDate;
-
+private Long schoolId;
 private String country;
 private String email;
 private String mobile;

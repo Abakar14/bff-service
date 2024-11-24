@@ -33,47 +33,72 @@ private final DocumentService documentService;
 private final BFFUtils bffUtils;
 
 
-public StudentDetailsResponseDto getStudentDetailsResponseDto(Long id, String jwtToken) {
+public Mono<StudentResponseDto> getStudentResponseDto(Long studentId, String jwtToken) {
 
-	getStudentDetails(id, jwtToken)
-			.flatMap(studentResponseDto -> getTeachers(studentResponseDto, jwtToken))
-			.flatMap()
-	// 1- get student 2- get profile picture
-	// 3- get teachers 4- get class info
-	// 5- get guardian
-	// 6- get Address ==> ok
-	// 7- get School name ==> ok
+	Mono<StudentResponseDto> studentResponseDtoMono = getStudentDetails(studentId, jwtToken);
 
-	return null;
-}
+	Mono<List<GuardianResponseDto>> guardianResponseDtoMono = getGuardianResponse(studentId, jwtToken);
 
-private Mono<SchoolResponseDto> getSchoolResponseDto(StudentResponseDto studentResponseDto, String jwtToken) {
-	return nuul;
-}
-private Mono<List<AddressResponseDto>> getAddress(StudentResponseDto studentResponseDto, String jwtToken) {
-	return nuul;
-}
-private Mono<List<GuardianResponseDto>> getGuardian(StudentResponseDto studentResponseDto, String jwtToken) {
-	return nuul;
-}
-private Mono<List<TeacherResponseDto>> getTeachers(StudentResponseDto studentResponseDto, String jwtToken) {
-	return nuul;
-}
-private Mono<StudentResponseDto> getStudentDetails(Long id, String jwtToken) {
-	return nuul;
-}
+	Mono<AddressResponseDto> addressResponseDtoMono = getAddressResponseDto(studentId, jwtToken);
+
+	//Combine all results into a single response
+	return Mono.zip(studentResponseDtoMono, guardianResponseDtoMono, addressResponseDtoMono)
+			       .map(tuple -> {
+				       StudentResponseDto studentResponse = tuple.getT1();
+				       List<GuardianResponseDto> guardians = tuple.getT2();
+				       AddressResponseDto addressResponse = tuple.getT3();
 
 
-public Mono<StudentDetailsResponseDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto,
-                                                                  List<MultipartFile> files, List<DocumentType> documentTypes,
-                                                                  OwnerType ownerType,
-                                                                  String jwtToken) {
+				       studentResponse.setGuardianResponseDtos(guardians);
+				       studentResponse.setAddressResponseDto(addressResponse);
+				       return studentResponse;
+			       }).doOnError(e -> logger.error("Error fetching student details: {}", e.getMessage()))
+			       .onErrorResume(e -> Mono.error(new RuntimeException("Failed to fetch student details", e)));
+
+
+}
+
+private Mono<StudentResponseDto> getStudentDetails(Long studentId, String jwtToken) {
+	return studentService.getStudentDetails(studentId, jwtToken);
+}
+
+private Mono<List<GuardianResponseDto>> getGuardianResponse(Long id, String jwtToken) {
+	return studentService.getGuardianResponseDto(id, jwtToken);
+}
+
+private Mono<AddressResponseDto> getAddressResponseDto(Long addressId, String jwtToken) {
+
+	return schoolService.getAddress(addressId, jwtToken);
+}
+
+
+private Mono<SchoolResponseDto> getSchool(Long schoolId, String jwtToken) {
+
+	return schoolService.getSchool(schoolId, jwtToken)
+			       .doOnSuccess(schoolResponseDto -> logger.info("School Id {}", schoolResponseDto.getId()));
+}
+
+
+/**
+ * @param studentDetailsCreateDto
+ * @param files
+ * @param documentTypes
+ * @param ownerType
+ * @param schoolId
+ * @param jwtToken
+ * @return studentResponseDto
+ */
+public Mono<StudentResponseDto> addStudentDetailsWithFiles(StudentDetailsCreateDto studentDetailsCreateDto,
+                                                           List<MultipartFile> files, List<DocumentType> documentTypes,
+                                                           OwnerType ownerType,
+                                                           Long schoolId,
+                                                           String jwtToken) {
 	// Log request details
 	logger.info("Adding student details with files for user: {}", bffUtils.getUsername());
 
 	return saveAddress(studentDetailsCreateDto.getAddressCreateDto(), jwtToken)
 			       .flatMap(addressDto -> processStudent(studentDetailsCreateDto, addressDto, jwtToken))
-			       .flatMap(studentDetailsDto -> uploadDocumentsForStudent(studentDetailsDto, files, documentTypes, ownerType, jwtToken))
+			       .flatMap(studentResponseDto -> uploadDocumentsForStudent(studentResponseDto, files, documentTypes, ownerType, schoolId, jwtToken))
 			       .doOnSuccess(result -> logger.info("Successfully processed student details: {}", result))
 			       .doOnError(e -> logger.error("Failed to process student details: {}", e.getMessage(), e))
 			       .onErrorResume(e -> Mono.error(new CustomProcessingException("Failed to process student details", e)));
@@ -86,8 +111,8 @@ private Mono<AddressResponseDto> saveAddress(AddressCreateDto addressDto, String
 }
 
 
-private Mono<StudentDetailsResponseDto> processStudent(StudentDetailsCreateDto studentDetailsCreateDto,
-                                                       AddressResponseDto addressDto, String jwtToken) {
+private Mono<StudentResponseDto> processStudent(StudentDetailsCreateDto studentDetailsCreateDto,
+                                                AddressResponseDto addressDto, String jwtToken) {
 	// Update student and guardian with address ID
 	studentDetailsCreateDto.getStudentCreateDto().setAddressId(addressDto.getId());
 	studentDetailsCreateDto.getStudentCreateDto().getGuardianCreateDtos().forEach(guardian -> {
@@ -97,27 +122,27 @@ private Mono<StudentDetailsResponseDto> processStudent(StudentDetailsCreateDto s
 	return studentService.saveStudent(studentDetailsCreateDto.getStudentCreateDto(), jwtToken)
 			       .map(studentDto -> {
 				       logger.info("Student saved with ID: {}", studentDto.getId());
-				       return StudentDetailsResponseDto.builder()
-						              .studentDto(studentDto)
-						              .addressDto(addressDto)
-						              .build();
+
+				       studentDto.setAddressResponseDto(addressDto);
+
+				       return studentDto;
+
 			       });
 }
 
-private Mono<StudentDetailsResponseDto> uploadDocumentsForStudent(StudentDetailsResponseDto studentDetailsDto,
-                                                                  List<MultipartFile> files, List<DocumentType> documentTypes, OwnerType ownerType, String jwtToken) {
+private Mono<StudentResponseDto> uploadDocumentsForStudent(StudentResponseDto studentResponseDto,
+                                                           List<MultipartFile> files, List<DocumentType> documentTypes, OwnerType ownerType, Long schoolId, String jwtToken) {
 
-	Long studentId = studentDetailsDto.getStudentDto().getId();
+	Long studentId = studentResponseDto.getId();
 	logger.debug("Uploading documents for student ID: {}", studentId);
 
-	return documentService.uploadDocuments(files, documentTypes, ownerType, studentId, jwtToken)
+	return documentService.uploadDocuments(files, documentTypes, ownerType, studentId, schoolId, jwtToken)
 			       .map(documents -> {
 				       logger.info("Uploaded {} documents for student ID: {}", documents.size(), studentId);
-				       studentDetailsDto.setDocumentDtos(documents);
-				       return studentDetailsDto;
+				       studentResponseDto.setDocumentResponseDtos(documents);
+				       return studentResponseDto;
 			       });
 }
-
 
 
 }

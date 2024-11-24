@@ -4,6 +4,7 @@ import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
 import com.bytmasoft.dss.dto.AddressCreateDto;
 import com.bytmasoft.dss.dto.AddressResponseDto;
+import com.bytmasoft.dss.dto.SchoolResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,18 @@ public Mono<AddressResponseDto> saveAddress(AddressCreateDto addressDto, String 
 }
 
 
-public Mono<AddressResponseDto> getAddress(Long id, String jwtToken) {
-	System.out.println("Address url : " + servicesProperties.getSchoolServiceAddress().getBaseUrl());
-	System.out.printf("addressId : " + id);
-	return webClientUtil.get(servicesProperties.getSchoolServiceAddress().getBaseUrl(), AddressResponseDto.class, jwtToken);
+public Mono<AddressResponseDto> getAddress(Long addressId, String jwtToken) {
+	String uri = String.format("%s/%d", servicesProperties.getSchoolServiceAddress().getBaseUrl(), addressId);
+
+	return webClientUtil.fetchOne(uri, AddressResponseDto.class, jwtToken);
+}
+
+
+public Mono<SchoolResponseDto> getSchool(Long schoolId, String jwtToken) {
+	String uri = String.format("%s/%d", servicesProperties.getSchoolServiceSchool().getBaseUrl(), schoolId);
+
+	return webClientUtil.fetchOne(uri, SchoolResponseDto.class, jwtToken);
+
 }
 
 

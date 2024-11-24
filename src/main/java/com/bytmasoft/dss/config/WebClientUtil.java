@@ -111,5 +111,44 @@ public <T> Flux<T> postList(String uri, Object requestBody, Class<T> responseTyp
 
 }
 
+/**
+ * Generic GET request to fetch a list of objects.
+ *
+ * @param <T>          the type of the response object.
+ * @param uri          the URI of the external service.
+ * @param jwtToken     the authorization token.
+ * @param responseType the class type of the response object.
+ * @return a Mono wrapping a list of the response type.
+ */
+public <T> Mono<List<T>> fetchList(String uri, Class<T> responseType, String jwtToken) {
+	logger.debug("Making GET request to: {}", uri);
+	return webClient.get()
+			       .uri(uri)
+			       .header("Authorization", jwtToken)
+			       .header("accept", "application/json")
+			       .retrieve()
+			       .bodyToFlux(responseType)
+			       .collectList();
+}
+
+/**
+ * Generic GET request to fetch a single object.
+ *
+ * @param <T>          the type of the response object.
+ * @param uri          the URI of the external service.
+ * @param jwtToken     the authorization token.
+ * @param responseType the class type of the response object.
+ * @return a Mono wrapping the response object.
+ */
+public <T> Mono<T> fetchOne(String uri, Class<T> responseType, String jwtToken) {
+	logger.debug("Making GET request to: {}", uri);
+	return webClient.get()
+			       .uri(uri)
+			       .header("Authorization", jwtToken)
+			       .retrieve()
+			       .bodyToMono(responseType)
+			       .retryWhen(Retry.fixedDelay(fixedDelay, Duration.ofSeconds(duration)))
+			       .doOnError(throwable -> logger.error("Error during GET request: {}", throwable.getMessage(), throwable));
+}
 
 }

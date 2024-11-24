@@ -3,6 +3,7 @@ package com.bytmasoft.dss.service;
 import com.bytmasoft.dss.config.ServicesProperties;
 import com.bytmasoft.dss.config.WebClientUtil;
 import com.bytmasoft.dss.dto.DocumentDto;
+import com.bytmasoft.dss.dto.DocumentResponseDto;
 import com.bytmasoft.dss.enums.DocumentType;
 import com.bytmasoft.dss.enums.OwnerType;
 import com.bytmasoft.dss.exception.FileProcessingException;
@@ -34,7 +35,7 @@ private final ServicesProperties servicesProperties;
 private final WebClient webClient;
 
 
-public Mono<List<DocumentDto>> uploadDocuments(List<MultipartFile> files, List<DocumentType> documentTypes, OwnerType ownerType, Long ownerId, String jwtToken) {
+public Mono<List<DocumentResponseDto>> uploadDocuments(List<MultipartFile> files, List<DocumentType> documentTypes, OwnerType ownerType, Long ownerId, Long schoolId, String jwtToken) {
 
 	MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
 
@@ -56,6 +57,7 @@ public Mono<List<DocumentDto>> uploadDocuments(List<MultipartFile> files, List<D
 					.header("Content-Type", file.getContentType());
 			bodyBuilder.part("documentTypes", documentTypes.get(i).name());
 			bodyBuilder.part("ownerType", ownerType.name());
+			bodyBuilder.part("schoolId", schoolId);
 			logger.debug("Added file part: {}, type: {}", filename, documentTypes.get(i));
 
 		} catch (IOException e) {
@@ -71,7 +73,7 @@ public Mono<List<DocumentDto>> uploadDocuments(List<MultipartFile> files, List<D
 			       .contentType(MediaType.MULTIPART_FORM_DATA)
 			       .body(BodyInserters.fromMultipartData(bodyBuilder.build()))
 			       .retrieve()
-			       .bodyToMono(new ParameterizedTypeReference<List<DocumentDto>>() {
+			       .bodyToMono(new ParameterizedTypeReference<List<DocumentResponseDto>>() {
 			       })
 			       .doOnSuccess(documents -> logger.info("Uploaded {} documents", documents.size()))
 			       .doOnError(e -> logger.error("Document upload failed: {}", e.getMessage(), e));

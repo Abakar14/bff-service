@@ -15,6 +15,7 @@ import java.util.List;
 public class StudentResponseDto {
 
 private Long id;
+private Long schoolId;
 private String matNumber;
 private String firstName;
 private String lastName;
@@ -25,7 +26,6 @@ private String country;
 private String email;
 private String mobile;
 private String phone;
-private Long addressId;
 private Long classId;
 private String nameOfSchoolBefore;
 private String schoolLevel;
@@ -38,6 +38,7 @@ private String doctorAddress;
 private List<CourseResponseDto> courseResponseDtos;
 private List<DocumentResponseDto> documentResponseDtos;
 private List<GuardianResponseDto> guardianResponseDtos;
+private AddressResponseDto addressResponseDto;
 private LocalDateTime addedOn;
 private LocalDateTime modifiedOn;
 private boolean active;

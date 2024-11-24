@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class StudentDetailsResponseDto {
 
-private StudentDto studentDto;
-private AddressResponseDto addressDto;
+private StudentResponseDto studentResponseDto;
+private AddressResponseDto addressResponseDto;
 private List<DocumentDto> documentDtos;
 }

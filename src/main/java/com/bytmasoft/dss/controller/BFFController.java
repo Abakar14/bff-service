@@ -50,7 +50,7 @@ public StudentResponseDto addStudentDetails(@RequestPart("studentDetailsCreateDt
 			       .switchIfEmpty(Mono.error(new IllegalStateException("No response generated"))).block();
 }
 
-@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+@PreAuthorize("hasAnyAuthority('MANAGE_USERS')")
 @GetMapping("/student-details/{id}")
 public StudentResponseDto getStudentDetails(@PathVariable Long id, @RequestHeader("Authorization") String jwtToken) {
 	return bffService.getStudentResponseDto(id, jwtToken)

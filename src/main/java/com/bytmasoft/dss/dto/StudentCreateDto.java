@@ -38,6 +38,7 @@ private String doctorName;
 private String doctorAddress;
 private List<Long> courseIds;
 private List<Long> documentsIds;
+private AddressCreateDto addressCreateDto;
 private List<GuardianCreateDto> guardianCreateDtos;
 
 }

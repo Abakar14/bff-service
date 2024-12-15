@@ -39,7 +39,7 @@ public Mono<StudentResponseDto> getStudentResponseDto(Long studentId, String jwt
 
 	Mono<List<GuardianResponseDto>> guardianResponseDtoMono = getGuardianResponse(studentId, jwtToken);
 
-	Mono<AddressResponseDto> addressResponseDtoMono = getAddressResponseDto(studentId, jwtToken);
+	Mono<AddressResponseDto> addressResponseDtoMono = getAddressResponseDto(studentResponseDtoMono.block().getAddressId(), jwtToken);
 
 	//Combine all results into a single response
 	return Mono.zip(studentResponseDtoMono, guardianResponseDtoMono, addressResponseDtoMono)
@@ -47,7 +47,6 @@ public Mono<StudentResponseDto> getStudentResponseDto(Long studentId, String jwt
 				       StudentResponseDto studentResponse = tuple.getT1();
 				       List<GuardianResponseDto> guardians = tuple.getT2();
 				       AddressResponseDto addressResponse = tuple.getT3();
-
 
 				       studentResponse.setGuardianResponseDtos(guardians);
 				       studentResponse.setAddressResponseDto(addressResponse);

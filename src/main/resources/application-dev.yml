@@ -6,37 +6,37 @@ eureka:
 services:
   student-service-student:
     name: student-service
-    base-url: http://localhost:9090/students
+    base-url: http://dss-gateway:9090/students
   student-service-guardian:
     name: student-service
-    base-url: http://localhost:9090/guardians
+    base-url: http://dss-gateway:9090/guardians
   student-service-consent:
     name: student-service
-    base-url: http://localhost:9090/consents
+    base-url: http://dss-gateway:9090/consents
 
   teacher-service-teacher:
     name: teacher-service
-    base-url: http://localhost:9090/teachers
+    base-url: http://dss-gateway:9090/teachers
   teacher-service-cours:
     name: teacher-service
-    base-url: http://localhost:9090/courses
+    base-url: http://dss-gateway:9090/courses
 
   school-service-school:
     name: school-service
-    base-url: http://localhost:9090/schools
+    base-url: http://dss-gateway:9090/schools
   school-service-class:
     name: school-service
-    base-url: http://localhost:9090/classes
+    base-url: http://dss-gateway:9090/classes
   school-service-address:
     name: school-service
-    base-url: http://localhost:9090/addresses
+    base-url: http://dss-gateway:9090/addresses
   school-service-employee:
     name: school-service
-    base-url: http://localhost:9090/employees
+    base-url: http://dss-gateway:9090/employees
 
   storage-service:
     name: storage-service
-    base-url: http://localhost:9090/documents
+    base-url: http://dss-gateway:9090/documents
 
 
 # JWT Properties expiration and refresh times (in milliseconds)

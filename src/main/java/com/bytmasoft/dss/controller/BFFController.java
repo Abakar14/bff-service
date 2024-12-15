@@ -27,7 +27,7 @@ private static final Logger logger = LoggerFactory.getLogger(BFFController.class
 
 private final BFFService bffService;
 
-@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+@PreAuthorize("hasAnyAuthority('MANAGE_USERS')")
 @PostMapping(value = "/student-details", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 public StudentResponseDto addStudentDetails(@RequestPart("studentDetailsCreateDto") StudentDetailsCreateDto studentDetailsCreateDto,
                                             @RequestPart("files") List<MultipartFile> files,
@@ -51,9 +51,9 @@ public StudentResponseDto addStudentDetails(@RequestPart("studentDetailsCreateDt
 }
 
 @PreAuthorize("hasAnyAuthority('MANAGE_USERS')")
-@GetMapping("/student-details/{id}")
-public StudentResponseDto getStudentDetails(@PathVariable Long id, @RequestHeader("Authorization") String jwtToken) {
-	return bffService.getStudentResponseDto(id, jwtToken)
+@GetMapping("/student-details/{studentId}")
+public StudentResponseDto getStudentDetails(@PathVariable Long studentId, @RequestHeader("Authorization") String jwtToken) {
+	return bffService.getStudentResponseDto(studentId, jwtToken)
 			       .switchIfEmpty(Mono.error(new IllegalStateException("No response founded"))).block();
 
 }
